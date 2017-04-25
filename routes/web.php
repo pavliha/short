@@ -36,7 +36,7 @@ Route::post('/api/shorten', function (\Illuminate\Http\Request $request) {
         'hash' => $newHash,
     ]);
 
-    return url($link);
+    return url($link->hash);
 
 });
 

@@ -67,7 +67,6 @@
         e.preventDefault()
         const form = new FormData(e.target)
         axios.post("/api/shorten", form).then((response) => {
-            const $link = $("#link")
             $link.html(`<a class="result" href="${response.data}"> ${response.data}</a>`)
             $link.hide().fadeIn('slow')
         }).catch(error => {
