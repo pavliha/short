@@ -1,95 +1,83 @@
 <!DOCTYPE html>
 <html lang="{{ config('app.locale') }}">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href="css/style.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>URL Shortener - short.dev</title>
+    <!-- Styles -->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- Scripts -->
+    <script>
+        window.Laravel = {!! json_encode([
+            'csrfToken' => csrf_token(),
+        ]) !!}
+    </script>
+</head>
+<body>
+<div class="site-wrapper">
 
-        <title>Laravel</title>
+    <div class="site-wrapper-inner">
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+        <div class="main-container">
 
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Raleway', sans-serif;
-                font-weight: 100;
-                height: 100vh;
-                margin: 0;
-            }
+            <div class="inner cover">
+                <span class="glyphicon glyphicon-link"></span>
+                <h1>URL Shortener</h1>
+                <h4>short.dev</h4>
 
-            .full-height {
-                height: 100vh;
-            }
+                <div class="row">
 
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
+                    <form id="url-form" class="col-lg-12">
+                        <div class="input-group input-group-lg">
+                            <input name="url" type="text" class="form-control" placeholder="Paste a link...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-shorten" type="submit">SHORTEN</button>
+                            </span>
+                        </div>
+                    </form>
 
-            .position-ref {
-                position: relative;
-            }
+                    <div class="col-lg-12">
+                        <div id="link"></div>
+                    </div>
 
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 84px;
-            }
-
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @if (Auth::check())
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ url('/login') }}">Login</a>
-                        <a href="{{ url('/register') }}">Register</a>
-                    @endif
-                </div>
-            @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
                 </div>
 
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
             </div>
+
         </div>
-    </body>
+
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+    const $link = $("#link")
+
+    $('#url-form').on('submit', (e) => {
+        e.preventDefault()
+        const form = new FormData(e.target)
+        axios.post("/api/shorten", form).then((response) => {
+            const $link = $("#link")
+            $link.html(`<a class="result" href="${response.data}"> ${response.data}</a>`)
+            $link.hide().fadeIn('slow')
+        }).catch(error => {
+            console.log(error.response.data)
+            $link.html(`<h3 class="result"> ${error.response.data}</h3>`)
+            $link.hide().fadeIn('slow')
+        })
+    })
+</script>
+<!-- Scripts -->
+</body>
 </html>
+

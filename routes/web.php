@@ -14,3 +14,35 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::post('/api/shorten', function (\Illuminate\Http\Request $request) {
+    $url = $request->url;
+    $rules = ['url' => 'required|url'];
+    $validation = Validator::make($request->all(), $rules);
+
+    if ($validation->fails()) {
+        return response($validation->errors()->all(),400);
+    }
+
+    if($link = App\Link::where('url', '=', $url)->first()){
+        return url($link->hash);
+    };
+
+    do {
+        $newHash = str_random(6);
+    } while (App\Link::where('hash', '=', $newHash)->count() > 0);
+
+    App\Link::create([
+        'url'  => $url,
+        'hash' => $newHash,
+    ]);
+
+    return url($link);
+
+});
+
+Route::get("/{hash}",function($hash){
+    return redirect()->to(App\Link::where('hash', '=', $hash)->first()->url);
+});
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');
