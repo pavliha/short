@@ -23,7 +23,9 @@ Route::post('/api/shorten', function (\Illuminate\Http\Request $request) {
         return response($validation->errors()->all(),400);
     }
 
-    if($link = App\Link::where('url', '=', $url)->first()){
+    $link = App\Link::where('url', '=', $url)->first();
+
+    if(is_object($link)){
         return url($link->hash);
     };
 
@@ -31,7 +33,7 @@ Route::post('/api/shorten', function (\Illuminate\Http\Request $request) {
         $newHash = str_random(6);
     } while (App\Link::where('hash', '=', $newHash)->count() > 0);
 
-    App\Link::create([
+    $link = App\Link::create([
         'url'  => $url,
         'hash' => $newHash,
     ]);
